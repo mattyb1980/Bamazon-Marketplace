@@ -1,0 +1,25 @@
+{
+  "name": "bamazon-marketplace",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattyb1980/Bamazon-Marketplace.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mattyb1980/Bamazon-Marketplace/issues"
+  },
+  "homepage": "https://github.com/mattyb1980/Bamazon-Marketplace#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "easy-table": "^1.1.0",
+    "inquirer": "^3.3.0",
+    "mysql": "^2.14.1"
+  }
+}
