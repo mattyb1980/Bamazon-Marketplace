@@ -80,33 +80,31 @@ function showInventory() {
   
   };
 
-consoleClear = function(){
-  console.log('\033c');
-};
 function showLowInventory() {
   
   consoleClear();
-
-  console.log("Sorry this COMMAND is not available at the moment. Please check back soon as we are always making improvements to the user exprerience.".red);
   // query the database for all items up for sale
-  // connection.query("SELECT item_id,product_name,price,stock_qty FROM products", function(err, inventory) {
+  connection.query("SELECT item_id,product_name,price,stock_qty FROM products WHERE stock_qty <= 10", function(err, inventory) {
     
-  //   if (err) throw err;
-  //   // Show a terminal table brought in by clolumnify
-  //     console.log("Bamazon Products".blue);
-  //     console.log("--------------------------------------------------------------------------".blue);
+    if (err) throw err;
+    // Show a terminal table brought in by clolumnify
+      console.log("Bamazon Products".blue);
+      console.log("This table indicates all products with an inventory of 10 or less.".red);
 
-  //     console.log("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><".blue);
-  //     console.log("--------------------------------------------------------------------------".blue);
-  //     var columns = columnify(inventory,{minWidth: 15,config: {price: {align: "right"}}})
-  //     console.log(columns)
-      // for (var i = 0; i < inventory.length; i++) {
+      console.log("--------------------------------------------------------------------------".blue);
 
-      //   console.log("Item ID: " + inventory[i].item_id + " \n\r | Product: " + inventory[i].product_name + "\n\r | Department: " + inventory[i].department_name + " \n\r | Price: " +  inventory[i].price);
+      console.log("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><".blue);
+      console.log("--------------------------------------------------------------------------".blue);
+      var columns = columnify(inventory,{minWidth: 15,config: {price: {align: "right"}}})
+      console.log(columns)
+      console.log("--------------------------------------------------------------------------".blue);
 
-  setTimeout(start, 3000);
-      // });
+      console.log("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><".blue);
+      console.log("--------------------------------------------------------------------------".blue);
+
+      setTimeout(start, 3000);
   
+  });
 };
 
 consoleClear = function(){
