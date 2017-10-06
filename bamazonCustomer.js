@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var Table = require("easy-table");
+var columnify = require("columnify");
 var colors = require("colors");
 
 // create the connection information for the sql database
@@ -26,29 +26,24 @@ connection.connect(function(err) {
 
 function showInventory() {
   // query the database for all items up for sale
-  connection.query("SELECT * FROM products", function(err, inventory) {
+  connection.query("SELECT item_id,product_name,price FROM products", function(err, inventory) {
     
     if (err) throw err;
-    // Show a terminal table
-      var invArray = [];
-      for (var i = 0; i < inventory.length; i++) {
-       
-        console.log("Item ID: " + inventory[i].item_id + " \n\r | Product: " + inventory[i].product_name + "\n\r | Department: " + inventory[i].department_name + " \n\r | Price: " +  inventory[i].price);
-      }
+    // Show a terminal table brought in by clolumnify
+      console.log("Bamazon Products".blue);
+      console.log("--------------------------------------------------------------------------".blue);
 
-    // var t = new Table
- 
-    // invArray.forEach(function(inv,) {
-    //   t.cell("Product Id", inventory[i].item_id)
-    //   t.cell("Description", inventory[i].product_name)
-    //   t.cell("Description", inventory[i].department_name)
-    //   t.cell("Price, USD", inventory[i].price, Table.number(2))
-    //   t.newRow()
-    // })
-    // console.log(t.toString())
+      console.log("><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><".blue);
+      console.log("--------------------------------------------------------------------------".blue);
+      var columns = columnify(inventory,{minWidth: 15,config: {price: {align: "right"}}})
+      console.log(columns)
+      // for (var i = 0; i < inventory.length; i++) {
+
+      //   console.log("Item ID: " + inventory[i].item_id + " \n\r | Product: " + inventory[i].product_name + "\n\r | Department: " + inventory[i].department_name + " \n\r | Price: " +  inventory[i].price);
+
       inquirer.prompt([
 
-            // Here we create a basic text prompt.
+            // Here we create a basic text prompt for the user.
             {
               type: "input",
               message: "What is the id of the item you would like to buy?",
@@ -65,28 +60,42 @@ function showInventory() {
             var itemId = order.id;
             connection.query("SELECT * FROM products WHERE item_id=" + itemId, function(err, selectedItem) {
                         if (err) throw err;
-                           if (selectedItem[0].StockQuantity - quantity >= 0) {
-                            console.log("Bamazon's Inventory has enough of that item (".green + selectedItem[0].ProductName.green + ")!".green);
-                              console.log("Quantity in Stock: ".green + selectedItem[0].StockQuantity + " Order Quantity: ".green + quantity);
-                              console.log("You will be charged ".green + (order.quantity * selectedItem[0].Price) +  " dollars.  Thank you for shopping at Bamazon.".green);
+                        console.log(selectedItem[0].stock_qty+" compared to "+quantity);
+                           if ((selectedItem[0].stock_qty - quantity) >= 0) {
+                            console.log("Bamazon's Inventory has enough of that item (".green + selectedItem[0].product_name.green + ")!".green);
+                              console.log("Quantity in Stock: ".green + selectedItem[0].stock_qty + " Order Quantity: ".green + quantity);
+                              console.log("You will be charged ".green + (order.quantity * selectedItem[0].price) +  " dollars.".green + "\n\rThank you for shopping at Bamazon.".green + "\n\rBamazon Marketplace will reload shortly...".green);
+                             
                               //  This is the code to remove the item from inventory.
-         
-                              connection.query('UPDATE products SET StockQuantity=? WHERE id=?', [selectedItem[0].StockQuantity - quantity, itemId],
+                              connection.query('UPDATE products SET stock_qty=? WHERE item_id=?', [(selectedItem[0].stock_qty - quantity), itemId],
                               function(err, inventory) {
                                 if (err) throw err;
-                                   // Runs the prompt again, so the user can keep shopping.
-                                   showInventory();
+
+                              // Runs the prompt again, so the user can keep shopping. Setting a timeout to give the user time to read.
+                              setTimeout(showInventory, 6000);
+                              setTimeout(consoleClear, 6000);
                               });  // Ends the code to remove item from inventory.
 
                          }
-
+                        // If amount ordered is greater than the amnount in the inventory.
                          else {
-                              console.log("Insufficient quantity.  Please order less of that item, as Bamazon only has ".red + selectedItem[0].stock_qty + " " + selectedItem[0].product_name + "'s" + " in stock at this moment.".red);
-                              showInventory();
+                              console.log("*Insufficient quantity.*\n\rBamazon cannot fulfill your order at the moment.\n\rOur warehouse indicates that there are only |".red + selectedItem[0].stock_qty + " " + selectedItem[0].product_name.blue + "'s".blue + "| in stock at this moment.".red);
+                              setTimeout(showInventory, 6000);
+                              setTimeout(consoleClear, 6000);
                          }
                     });
       });
 
   });
+  
 }
+// function to clear the terminal to give a cleaner look
+consoleClear = function(){
+  console.log('\033c');
+};
+consoleClear();
+// console.reset = function (){
+//   return process.stdout.write('\033c');
+// }
 showInventory();
+
