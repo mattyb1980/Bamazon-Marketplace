@@ -79,7 +79,7 @@ function showInventory() {
                          }
                         // If amount ordered is greater than the amnount in the inventory.
                          else {
-                              console.log("*Insufficient quantity.*\n\rBamazon cannot fulfill your order at the moment.\n\rOur warehouse indicates that there are only |".red + selectedItem[0].stock_qty + " " + selectedItem[0].product_name.blue + "'s".blue + "| in stock at this moment.".red);
+                              console.log("*Insufficient Inventory.*\n\rBamazon cannot fulfill your order at the moment.\n\rOur warehouse indicates that there are only |".red + selectedItem[0].stock_qty + " " + selectedItem[0].product_name.blue + "'s".blue + "| in stock at this moment.".red);
                               setTimeout(showInventory, 6000);
                               setTimeout(consoleClear, 6000);
                          }
